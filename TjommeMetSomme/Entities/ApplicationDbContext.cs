@@ -5,7 +5,7 @@ using TjommeMetSomme.Entities.Configuration;
 
 namespace TjommeMetSomme.Entities
 {
-    public class ApplicationDbContext : IdentityDbContext<User, Role, Guid>
+    public class ApplicationDbContext : IdentityDbContext<User, Role, int>
     {
         public DbSet<Student> Students { get; set; }
 

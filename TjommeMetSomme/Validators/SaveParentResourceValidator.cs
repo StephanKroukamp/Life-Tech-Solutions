@@ -7,11 +7,11 @@ namespace TjommeMetSomme.Validators
     {
         public SaveParentResourceValidator()
         {
-            RuleFor(a => a.FirstName)
+            RuleFor(saveParentResource => saveParentResource.FirstName)
                 .NotEmpty()
                 .MaximumLength(50);
 
-            RuleFor(a => a.LastName)
+            RuleFor(saveParentResource => saveParentResource.LastName)
                 .NotEmpty()
                 .MaximumLength(50);
         }

@@ -8,19 +8,19 @@ namespace TjommeMetSomme.Entities.Configuration
         public void Configure(EntityTypeBuilder<Parent> builder)
         {
             builder
-                .HasKey(a => a.ParentId); 
+                .HasKey(parent => parent.ParentId); 
 
             builder
-                .Property(m => m.ParentId)
+                .Property(parent => parent.ParentId)
                 .UseMySqlIdentityColumn();
 
             builder
-                .Property(m => m.FirstName)
+                .Property(parent => parent.FirstName)
                 .IsRequired()
                 .HasMaxLength(50);
 
             builder
-                .Property(m => m.LastName)
+                .Property(parent => parent.LastName)
                 .IsRequired()
                 .HasMaxLength(50);
 

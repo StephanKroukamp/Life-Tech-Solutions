@@ -11,6 +11,8 @@ namespace TjommeMetSomme.Repositories
 
         private IStudentRepository _studentRepository;
 
+        private ICourseRepository _courseRepository;
+
         public UnitOfWork(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
@@ -19,6 +21,8 @@ namespace TjommeMetSomme.Repositories
         public IParentRepository Parents => _parentRepository ??= new ParentRepository(_applicationDbContext);
 
         public IStudentRepository Students => _studentRepository ??= new StudentRepository(_applicationDbContext);
+
+        public ICourseRepository Courses => _courseRepository ??= new CourseRepository(_applicationDbContext);
 
         public async Task<int> CommitAsync()
         {

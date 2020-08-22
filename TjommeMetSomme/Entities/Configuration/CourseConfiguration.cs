@@ -8,14 +8,14 @@ namespace TjommeMetSomme.Entities.Configuration
         public void Configure(EntityTypeBuilder<Course> builder)
         {
             builder
-                .HasKey(a => a.CourseId);
+                .HasKey(course => course.CourseId);
 
             builder
-                .Property(m => m.CourseId)
+                .Property(course => course.CourseId)
                 .UseMySqlIdentityColumn();
 
             builder
-                .Property(m => m.Name)
+                .Property(course => course.Name)
                 .IsRequired()
                 .HasMaxLength(50);
 

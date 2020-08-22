@@ -36,16 +36,16 @@ namespace TjommeMetSomme.Services
                 .GetAllWithParentAsync();
         }
 
-        public async Task<Student> GetStudentById(int id)
+        public async Task<Student> GetStudentById(int studentId)
         {
             return await _unitOfWork.Students
-                .GetByIdAsync(id);
+                .GetByIdAsync(studentId);
         }
 
-        public async Task<Student> GetStudentByIdWithParent(int id)
+        public async Task<Student> GetStudentByIdWithParent(int studentId)
         {
             return await _unitOfWork.Students
-                .GetByIdWithParentAsync(id);
+                .GetByIdWithParentAsync(studentId);
         }
 
         public async Task<IEnumerable<Student>> GetStudentsByParentId(int parentId)

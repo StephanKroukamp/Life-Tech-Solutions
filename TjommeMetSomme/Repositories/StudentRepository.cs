@@ -15,23 +15,23 @@ namespace TjommeMetSomme.Repositories
         public async Task<IEnumerable<Student>> GetAllWithParentAsync()
         {
             return await ApplicationDbContext.Students
-                .Include(m => m.Parent)
+                .Include(student => student.Parent)
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<Student>> GetAllWithParentByParentIdAsync(int parentId)
         {
             return await ApplicationDbContext.Students
-                .Include(m => m.Parent)
-                .Where(m => m.ParentId == parentId)
+                .Include(student => student.Parent)
+                .Where(student => student.ParentId == parentId)
                 .ToListAsync();
         }
 
-        public async Task<Student> GetByIdWithParentAsync(int id)
+        public async Task<Student> GetByIdWithParentAsync(int studentId)
         {
             return await ApplicationDbContext.Students
-                .Include(m => m.Parent)
-                .SingleOrDefaultAsync(m => m.StudentId == id);
+                .Include(student => student.Parent)
+                .SingleOrDefaultAsync(student => student.StudentId == studentId);
         }
 
         private ApplicationDbContext ApplicationDbContext

@@ -8,7 +8,7 @@ namespace TjommeMetSomme.Services
     {
         Task<IEnumerable<Parent>> GetAllParents();
 
-        Task<Parent> GetParentById(int id);
+        Task<Parent> GetParentById(int parentId);
 
         Task<Parent> CreateParent(Parent parent);
 

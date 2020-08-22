@@ -8,7 +8,7 @@ namespace TjommeMetSomme.Repositories
     {
         Task<IEnumerable<Student>> GetAllWithParentAsync();
 
-        Task<Student> GetByIdWithParentAsync(int id);
+        Task<Student> GetByIdWithParentAsync(int studentId);
 
         Task<IEnumerable<Student>> GetAllWithParentByParentIdAsync(int parentId);
     }

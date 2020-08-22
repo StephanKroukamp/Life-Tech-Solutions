@@ -7,15 +7,15 @@ namespace TjommeMetSomme.Validators
     {
         public SaveStudentResourceValidator()
         {
-            RuleFor(m => m.FirstName)
+            RuleFor(saveStudentResource => saveStudentResource.FirstName)
                 .NotEmpty()
                 .MaximumLength(50);
 
-            RuleFor(m => m.LastName)
+            RuleFor(saveStudentResource => saveStudentResource.LastName)
                 .NotEmpty()
                 .MaximumLength(50);
 
-            RuleFor(m => m.ParentId)
+            RuleFor(saveStudentResource => saveStudentResource.ParentId)
                 .NotEmpty()
                 .WithMessage("'Parent Id' must not be 0.");
         }

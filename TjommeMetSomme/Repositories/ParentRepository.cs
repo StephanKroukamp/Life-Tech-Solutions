@@ -13,15 +13,15 @@ namespace TjommeMetSomme.Repositories
         public async Task<IEnumerable<Parent>> GetAllWithStudentsAsync()
         {
             return await ApplicationDbContext.Parents
-                .Include(a => a.Students)
+                .Include(parent => parent.Students)
                 .ToListAsync();
         }
 
         public Task<Parent> GetWithStudentsByParentIdAsync(int parentId)
         {
             return ApplicationDbContext.Parents
-                .Include(a => a.Students)
-                .SingleOrDefaultAsync(a => a.ParentId == parentId);
+                .Include(parent => parent.Students)
+                .SingleOrDefaultAsync(parent => parent.ParentId == parentId);
         }
 
         private ApplicationDbContext ApplicationDbContext

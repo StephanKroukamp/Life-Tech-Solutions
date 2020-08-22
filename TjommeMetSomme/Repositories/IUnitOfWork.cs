@@ -9,6 +9,8 @@ namespace TjommeMetSomme.Repositories
 
         IStudentRepository Students { get; }
 
+        ICourseRepository Courses { get; }
+
         Task<int> CommitAsync();
     }
 }

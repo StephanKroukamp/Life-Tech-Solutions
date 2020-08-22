@@ -68,6 +68,7 @@ namespace TjommeMetSomme
 
             services.AddTransient<IParentService, ParentService>();
             services.AddTransient<IStudentService, StudentService>();
+            services.AddTransient<ICourseService, CourseService>();
 
             services.AddSwaggerGen(options =>
             {

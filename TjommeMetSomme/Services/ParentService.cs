@@ -11,7 +11,7 @@ namespace TjommeMetSomme.Services
 
         public ParentService(IUnitOfWork unitOfWork)
         {
-            this._unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Parent> CreateParent(Parent parent)
@@ -36,9 +36,9 @@ namespace TjommeMetSomme.Services
             return await _unitOfWork.Parents.GetAllAsync();
         }
 
-        public async Task<Parent> GetParentById(int id)
+        public async Task<Parent> GetParentById(int parentId)
         {
-            return await _unitOfWork.Parents.GetByIdAsync(id);
+            return await _unitOfWork.Parents.GetByIdAsync(parentId);
         }
 
         public async Task UpdateParent(Parent parentToBeUpdated, Parent parent)

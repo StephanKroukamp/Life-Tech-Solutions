@@ -8,26 +8,26 @@ namespace TjommeMetSomme.Entities.Configuration
         public void Configure(EntityTypeBuilder<Student> builder)
         {
             builder
-                .HasKey(a => a.StudentId);
+                .HasKey(student => student.StudentId);
 
             builder
-                .Property(m => m.StudentId)
+                .Property(student => student.StudentId)
                 .UseMySqlIdentityColumn();
 
             builder
-                .Property(m => m.FirstName)
+                .Property(student => student.FirstName)
                 .IsRequired()
                 .HasMaxLength(50);
 
             builder
-                .Property(m => m.LastName)
+                .Property(student => student.LastName)
                 .IsRequired()
                 .HasMaxLength(50);
 
             builder
-                .HasOne(m => m.Parent)
-                .WithMany(a => a.Students)
-                .HasForeignKey(m => m.ParentId);
+                .HasOne(student => student.Parent)
+                .WithMany(parent => parent.Students)
+                .HasForeignKey(student => student.ParentId);
 
             builder
                 .ToTable("Students");

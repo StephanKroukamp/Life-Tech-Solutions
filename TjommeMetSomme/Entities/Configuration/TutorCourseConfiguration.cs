@@ -8,20 +8,20 @@ namespace TjommeMetSomme.Entities.Configuration
         public void Configure(EntityTypeBuilder<TutorCourse> builder)
         {
             builder
-                .HasKey(tc => new { tc.TutorId, tc.CourseId });
+                .HasKey(tutorCourse => new { tutorCourse.TutorId, tutorCourse.CourseId });
 
             builder
-                .HasOne<Tutor>(tc => tc.Tutor)
-                .WithMany(t => t.TutorCourses)
-                .HasForeignKey(sc => sc.TutorId);
+                .HasOne<Tutor>(tutorCourse => tutorCourse.Tutor)
+                .WithMany(tutor => tutor.TutorCourses)
+                .HasForeignKey(tutorCourse => tutorCourse.TutorId);
 
             builder
-                .HasOne<Course>(tc => tc.Course)
-                .WithMany(t => t.TutorCourses)
-                .HasForeignKey(tc => tc.CourseId);
+                .HasOne<Course>(tutorCourse => tutorCourse.Course)
+                .WithMany(tutor => tutor.TutorCourses)
+                .HasForeignKey(tutorCourse => tutorCourse.CourseId);
 
             builder
-                .ToTable("Tutor_Course");
+                .ToTable("Tutors_Courses");
         }
     }
 }

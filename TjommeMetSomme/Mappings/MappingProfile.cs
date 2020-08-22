@@ -1,7 +1,7 @@
-﻿using AutoMapper;
+﻿using System.Linq;
+using AutoMapper;
 using TjommeMetSomme.Entities;
 using TjommeMetSomme.Resources;
-
 
 namespace TjommeMetSomme.Mappings
 {
@@ -13,7 +13,10 @@ namespace TjommeMetSomme.Mappings
             CreateMap<Parent, ParentResource>();
 
             CreateMap<Student, StudentResource>()
-                .ForMember(student => student.Parent, opt => opt.MapFrom(resource => resource.Parent));
+                .ForMember(studentResource => studentResource.Parent, opt => opt.MapFrom(student => student.Parent));
+
+            CreateMap<Course, CourseResource>()
+                .ForMember(courseResource => courseResource.StudentIds, opt => opt.MapFrom(course => course.StudentCourses.Select(studentCourse => studentCourse.StudentId).ToList()));
 
             // Resource to Entity
             CreateMap<ParentResource, Parent>();
@@ -22,11 +25,10 @@ namespace TjommeMetSomme.Mappings
             CreateMap<StudentResource, Student>();
             CreateMap<SaveStudentResource, Student>();
 
-            CreateMap<SignUpResource, User>()
-                .ForMember(user => user.UserName, opt => opt.MapFrom(resource => resource.UserName))
-                .ForMember(user => user.Email, opt => opt.MapFrom(resource => resource.Email))
-                .ForMember(user => user.FirstName, opt => opt.MapFrom(resource => resource.FirstName))
-                .ForMember(user => user.LastName, opt => opt.MapFrom(resource => resource.LastName));
+            CreateMap<CourseResource, Course>();
+            CreateMap<SaveCourseResource, Course>();
+
+            CreateMap<SignUpResource, User>();
         }
     }
 }

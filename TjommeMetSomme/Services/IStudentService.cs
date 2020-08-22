@@ -8,9 +8,9 @@ namespace TjommeMetSomme.Services
     {
         Task<IEnumerable<Student>> GetAllWithParent();
 
-        Task<Student> GetStudentById(int id);
+        Task<Student> GetStudentById(int studentId);
 
-        Task<Student> GetStudentByIdWithParent(int id);
+        Task<Student> GetStudentByIdWithParent(int studentId);
 
         Task<IEnumerable<Student>> GetStudentsByParentId(int parentId);
 
