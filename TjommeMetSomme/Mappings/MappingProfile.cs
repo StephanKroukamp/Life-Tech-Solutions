@@ -12,7 +12,11 @@ namespace TjommeMetSomme.Mappings
         {
             // Entity to Resource
             CreateMap<Parent, ParentResource>()
-                .ForMember(parentResource => parentResource.Email, opt => opt.MapFrom(parent => parent.ApplicationUserId));
+                    .ForMember(parentResource => parentResource.Id, opt => opt.MapFrom(parent => parent.ApplicationUserId))
+                    .ForMember(parentResource => parentResource.Email, opt => opt.MapFrom(parent => parent.ApplicationUser.Email))
+                    .ForMember(parentResource => parentResource.UserName, opt => opt.MapFrom(parent => parent.ApplicationUser.UserName))
+                    .ForMember(parentResource => parentResource.FirstName, opt => opt.MapFrom(parent => parent.ApplicationUser.FirstName))
+                    .ForMember(parentResource => parentResource.LastName, opt => opt.MapFrom(parent => parent.ApplicationUser.LastName));
 
             CreateMap<Student, StudentResource>()
                 .ForMember(studentResource => studentResource.Parent, opt => opt.MapFrom(student => student.Parent));

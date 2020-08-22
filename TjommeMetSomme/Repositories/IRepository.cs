@@ -7,17 +7,17 @@ namespace TjommeMetSomme.Repositories
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        ValueTask<TEntity> GetByIdAsync(int id);
+        ValueTask<TEntity> GetById(int id);
 
-        Task<IEnumerable<TEntity>> GetAllAsync();
+        Task<IEnumerable<TEntity>> GetAll();
 
         IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
 
-        Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<TEntity> SingleOrDefault(Expression<Func<TEntity, bool>> predicate);
 
-        Task AddAsync(TEntity entity);
+        Task Add(TEntity entity);
 
-        Task AddRangeAsync(IEnumerable<TEntity> entities);
+        Task AddRange(IEnumerable<TEntity> entities);
 
         void Remove(TEntity entity);
 

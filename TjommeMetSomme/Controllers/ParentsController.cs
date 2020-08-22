@@ -34,9 +34,9 @@ namespace TjommeMetSomme.Controllers
 
         [HttpGet("")]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<ParentResource>>> GetAllParents()
+        public async Task<ActionResult<IEnumerable<ParentResource>>> GetAll(bool includeStudents = true)
         {
-            var parents = await _parentService.GetAllParents();
+            var parents = await _parentService.GetAll(includeStudents, true);
 
             var parentResponses = _mapper.Map<IEnumerable<Parent>, IEnumerable<ParentResource>>(parents);
 
@@ -45,9 +45,9 @@ namespace TjommeMetSomme.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<ParentResource>> GetParentById(int id)
+        public async Task<ActionResult<ParentResource>> GetById(int id, bool includeStudents = true)
         {
-            var parent = await _parentService.GetParentById(id);
+            var parent = await _parentService.GetById(id, includeStudents, true);
 
             var parentResource = _mapper.Map<Parent, ParentResource>(parent);
 
@@ -56,7 +56,7 @@ namespace TjommeMetSomme.Controllers
 
         [HttpPost("")]
         [Authorize(Roles = "Administrator, Manager")]
-        public async Task<ActionResult<ParentResource>> CreateParent([FromBody] SaveParentResource saveParentResource)
+        public async Task<ActionResult<ParentResource>> Create([FromBody] SaveParentResource saveParentResource)
         {
             var validator = new SaveParentResourceValidator();
 
@@ -82,14 +82,14 @@ namespace TjommeMetSomme.Controllers
             {
                 return Problem(userAddToRoleResult.Errors.First().Description, null, 500);
             }
-            
+
             var parentToCreate = _mapper.Map<SaveParentResource, Parent>(saveParentResource);
 
             parentToCreate.ApplicationUserId = user.Id;
 
-            var newParent = await _parentService.CreateParent(parentToCreate);
+            var newParent = await _parentService.Create(parentToCreate);
 
-            var parent = await _parentService.GetParentById(newParent.Id);
+            var parent = await _parentService.GetById(newParent.Id);
 
             var parentResource = _mapper.Map<Parent, ParentResource>(parent);
 
@@ -98,7 +98,7 @@ namespace TjommeMetSomme.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Administrator, Manager")]
-        public async Task<ActionResult<ParentResource>> UpdateParent(int id, [FromBody] SaveParentResource saveParentResource)
+        public async Task<ActionResult<ParentResource>> Update(int id, [FromBody] SaveParentResource saveParentResource)
         {
             var validator = new SaveParentResourceValidator();
 
@@ -109,7 +109,7 @@ namespace TjommeMetSomme.Controllers
                 return BadRequest(validationResult.Errors); // this needs refining
             }
 
-            var parentToBeUpdated = await _parentService.GetParentById(id);
+            var parentToBeUpdated = await _parentService.GetById(id);
 
             if (parentToBeUpdated == null)
             {
@@ -118,9 +118,9 @@ namespace TjommeMetSomme.Controllers
 
             var parent = _mapper.Map<SaveParentResource, Parent>(saveParentResource);
 
-            await _parentService.UpdateParent(parentToBeUpdated, parent);
+            await _parentService.Update(parentToBeUpdated, parent);
 
-            var updatedParent = await _parentService.GetParentById(id);
+            var updatedParent = await _parentService.GetById(id);
 
             var updatedParentResource = _mapper.Map<Parent, ParentResource>(updatedParent);
 
@@ -129,11 +129,11 @@ namespace TjommeMetSomme.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Administrator, Manager")]
-        public async Task<IActionResult> DeleteParent(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var parent = await _parentService.GetParentById(id);
+            var parent = await _parentService.GetById(id);
 
-            await _parentService.DeleteParent(parent);
+            await _parentService.Delete(parent);
 
             return NoContent();
         }

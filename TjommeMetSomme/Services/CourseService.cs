@@ -18,9 +18,9 @@ namespace TjommeMetSomme.Services
 
         public async Task<Course> CreateCourse(Course course)
         {
-            await _unitOfWork.Courses.AddAsync(course);
+            await _unitOfWork.Courses.Add(course);
 
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.Commit();
 
             return course;
         }
@@ -29,7 +29,7 @@ namespace TjommeMetSomme.Services
         {
             _unitOfWork.Courses.Remove(course);
 
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.Commit();
         }
 
         public async Task<IEnumerable<Course>> GetAllWithStudents()
@@ -41,7 +41,7 @@ namespace TjommeMetSomme.Services
         public async Task<Course> GetCourseById(int courseId)
         {
             return await _unitOfWork.Courses
-                .GetByIdAsync(courseId);
+                .GetById(courseId);
         }
 
         public async Task<Course> GetCourseByIdWithStudents(int courseId)
@@ -60,7 +60,7 @@ namespace TjommeMetSomme.Services
         {
             courseToBeUpdated.Name = course.Name;
 
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.Commit();
         }
     }
 }

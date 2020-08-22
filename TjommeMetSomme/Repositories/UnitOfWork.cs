@@ -24,7 +24,7 @@ namespace TjommeMetSomme.Repositories
 
         public ICourseRepository Courses => _courseRepository ??= new CourseRepository(_applicationDbContext);
 
-        public async Task<int> CommitAsync()
+        public async Task<int> Commit()
         {
             return await _applicationDbContext.SaveChangesAsync();
         }

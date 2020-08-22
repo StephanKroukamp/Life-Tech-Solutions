@@ -4,16 +4,10 @@ using TjommeMetSomme.Entities;
 
 namespace TjommeMetSomme.Services
 {
-    public interface IParentService
+    public interface IParentService : IService<Parent>
     {
-        Task<IEnumerable<Parent>> GetAllParents();
+        Task<IEnumerable<Parent>> GetAll(bool includeStudents, bool includeApplicationUser);
 
-        Task<Parent> GetParentById(int parentId);
-
-        Task<Parent> CreateParent(Parent parent);
-
-        Task UpdateParent(Parent parentToBeUpdated, Parent parent);
-
-        Task DeleteParent(Parent parent);
+        Task<Parent> GetById(int parentId, bool includeStudents, bool includeApplicationUser);
     }
 }

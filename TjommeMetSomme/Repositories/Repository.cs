@@ -16,12 +16,12 @@ namespace TjommeMetSomme.Repositories
             this.Context = context;
         }
 
-        public async Task AddAsync(TEntity entity)
+        public async Task Add(TEntity entity)
         {
             await Context.Set<TEntity>().AddAsync(entity);
         }
 
-        public async Task AddRangeAsync(IEnumerable<TEntity> entities)
+        public async Task AddRange(IEnumerable<TEntity> entities)
         {
             await Context.Set<TEntity>().AddRangeAsync(entities);
         }
@@ -31,12 +31,12 @@ namespace TjommeMetSomme.Repositories
             return Context.Set<TEntity>().Where(predicate);
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        public async Task<IEnumerable<TEntity>> GetAll()
         {
             return await Context.Set<TEntity>().ToListAsync();
         }
 
-        public ValueTask<TEntity> GetByIdAsync(int id)
+        public ValueTask<TEntity> GetById(int id)
         {
             return Context.Set<TEntity>().FindAsync(id);
         }
@@ -51,7 +51,7 @@ namespace TjommeMetSomme.Repositories
             Context.Set<TEntity>().RemoveRange(entities);
         }
 
-        public Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+        public Task<TEntity> SingleOrDefault(Expression<Func<TEntity, bool>> predicate)
         {
             return Context.Set<TEntity>().SingleOrDefaultAsync(predicate);
         }

@@ -16,9 +16,9 @@ namespace TjommeMetSomme.Services
 
         public async Task<Student> CreateStudent(Student student)
         {
-            await _unitOfWork.Students.AddAsync(student);
+            await _unitOfWork.Students.Add(student);
 
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.Commit();
 
             return student;
         }
@@ -27,7 +27,7 @@ namespace TjommeMetSomme.Services
         {
             _unitOfWork.Students.Remove(student);
 
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.Commit();
         }
 
         public async Task<IEnumerable<Student>> GetAllWithParent()
@@ -39,7 +39,7 @@ namespace TjommeMetSomme.Services
         public async Task<Student> GetStudentById(int studentId)
         {
             return await _unitOfWork.Students
-                .GetByIdAsync(studentId);
+                .GetById(studentId);
         }
 
         public async Task<Student> GetStudentByIdWithParent(int studentId)
@@ -58,7 +58,7 @@ namespace TjommeMetSomme.Services
         {
             studentToBeUpdated.ParentId = student.ParentId;
 
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.Commit();
         }
     }
 }

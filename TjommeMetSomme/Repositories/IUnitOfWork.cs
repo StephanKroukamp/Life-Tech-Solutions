@@ -11,6 +11,6 @@ namespace TjommeMetSomme.Repositories
 
         ICourseRepository Courses { get; }
 
-        Task<int> CommitAsync();
+        Task<int> Commit();
     }
 }
