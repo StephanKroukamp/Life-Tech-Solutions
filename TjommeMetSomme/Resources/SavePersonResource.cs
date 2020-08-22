@@ -1,6 +1,6 @@
 ﻿namespace TjommeMetSomme.Resources
 {
-    public class SignUpResource
+    public class SavePersonResource
     {
         public string Email { get; set; }
 

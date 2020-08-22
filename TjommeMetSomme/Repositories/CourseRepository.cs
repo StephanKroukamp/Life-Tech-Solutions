@@ -31,7 +31,7 @@ namespace TjommeMetSomme.Repositories
         {
             return await ApplicationDbContext.Courses
                 .Include(course => course.StudentCourses)
-                .SingleOrDefaultAsync(course => course.CourseId == courseId);
+                .SingleOrDefaultAsync(course => course.Id == courseId);
         }
 
         private ApplicationDbContext ApplicationDbContext

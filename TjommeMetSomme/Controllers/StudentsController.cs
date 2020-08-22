@@ -7,6 +7,9 @@ using TjommeMetSomme.Services;
 using TjommeMetSomme.Validators;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TjommeMetSomme.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
+using System.Linq;
 
 namespace TjommeMetSomme.Controllers
 {
@@ -14,12 +17,16 @@ namespace TjommeMetSomme.Controllers
     [ApiController]
     public class StudentsController : ControllerBase
     {
+        private UserManager<ApplicationUser> _userManager;
+
         private readonly IStudentService _studentService;
 
         private readonly IMapper _mapper;
-
-        public StudentsController(IStudentService studentService, IMapper mapper)
+        
+        public StudentsController(UserManager<ApplicationUser> userManager, IStudentService studentService, IMapper mapper)
         {
+            _userManager = userManager;
+
             _mapper = mapper;
 
             _studentService = studentService;
@@ -60,11 +67,27 @@ namespace TjommeMetSomme.Controllers
                 return BadRequest(validationResult.Errors); // this needs refining
             }
 
+            var user = _mapper.Map<SaveStudentResource, ApplicationUser>(saveStudentResource);
+
+            var userCreateResult = await _userManager.CreateAsync(user, saveStudentResource.Password);
+
+            if (!userCreateResult.Succeeded)
+            {
+                return Problem(userCreateResult.Errors.First().Description, null, 500);
+            }
+
+            var userAddToRoleResult = await _userManager.AddToRoleAsync(user, Constants.Student.Role.NAME);
+
+            if (!userAddToRoleResult.Succeeded)
+            {
+                return Problem(userAddToRoleResult.Errors.First().Description, null, 500);
+            }
+
             var studentToCreate = _mapper.Map<SaveStudentResource, Student>(saveStudentResource);
 
             var newStudent = await _studentService.CreateStudent(studentToCreate);
 
-            var student = await _studentService.GetStudentByIdWithParent(newStudent.StudentId);
+            var student = await _studentService.GetStudentByIdWithParent(newStudent.Id);
 
             var studentResource = _mapper.Map<Student, StudentResource>(student);
 

@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TjommeMetSomme.Entities;
+using TjommeMetSomme.Entities.Identity;
 using TjommeMetSomme.Resources;
 using TjommeMetSomme.Services;
 using TjommeMetSomme.Validators;
@@ -14,15 +17,19 @@ namespace TjommeMetSomme.Controllers
     [ApiController]
     public class ParentsController : ControllerBase
     {
+        private readonly UserManager<ApplicationUser> _userManager;
+
         private readonly IParentService _parentService;
 
         private readonly IMapper _mapper;
 
-        public ParentsController(IParentService parentService, IMapper mapper)
+        public ParentsController(UserManager<ApplicationUser> userManager, IParentService parentService, IMapper mapper)
         {
-            _mapper = mapper;
+            _userManager = userManager;
 
             _parentService = parentService;
+
+            _mapper = mapper;
         }
 
         [HttpGet("")]
@@ -60,11 +67,29 @@ namespace TjommeMetSomme.Controllers
                 return BadRequest(validationResult.Errors); // this needs refining
             }
 
+            var user = _mapper.Map<SaveParentResource, ApplicationUser>(saveParentResource);
+
+            var userCreateResult = await _userManager.CreateAsync(user, saveParentResource.Password);
+
+            if (!userCreateResult.Succeeded)
+            {
+                return Problem(userCreateResult.Errors.First().Description, null, 500);
+            }
+
+            var userAddToRoleResult = await _userManager.AddToRoleAsync(user, Constants.Parent.Role.NAME);
+
+            if (!userAddToRoleResult.Succeeded)
+            {
+                return Problem(userAddToRoleResult.Errors.First().Description, null, 500);
+            }
+            
             var parentToCreate = _mapper.Map<SaveParentResource, Parent>(saveParentResource);
+
+            parentToCreate.ApplicationUserId = user.Id;
 
             var newParent = await _parentService.CreateParent(parentToCreate);
 
-            var parent = await _parentService.GetParentById(newParent.ParentId);
+            var parent = await _parentService.GetParentById(newParent.Id);
 
             var parentResource = _mapper.Map<Parent, ParentResource>(parent);
 
@@ -73,7 +98,7 @@ namespace TjommeMetSomme.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Administrator, Manager")]
-        public async Task<ActionResult<ParentResource>> UpdatParent(int id, [FromBody] SaveParentResource saveParentResource)
+        public async Task<ActionResult<ParentResource>> UpdateParent(int id, [FromBody] SaveParentResource saveParentResource)
         {
             var validator = new SaveParentResourceValidator();
 

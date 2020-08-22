@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TjommeMetSomme.Entities.Configuration;
+using TjommeMetSomme.Entities.Configuration.Identity;
+using TjommeMetSomme.Entities.Identity;
 
 namespace TjommeMetSomme.Entities
 {
-    public class ApplicationDbContext : IdentityDbContext<User, Role, int>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
     {
         public DbSet<Student> Students { get; set; }
 
@@ -27,14 +29,20 @@ namespace TjommeMetSomme.Entities
         {
             base.OnModelCreating(builder);
 
+            builder.ApplyConfiguration(new ApplicationRoleConfiguration());
+
+            builder.ApplyConfiguration(new ApplicationUserConfiguration());
+
+            builder.ApplyConfiguration(new ApplicationUserRoleConfiguration());
+
+            builder.ApplyConfiguration(new ParentConfiguration());
+
             builder.ApplyConfiguration(new StudentConfiguration());
 
             builder.ApplyConfiguration(new CourseConfiguration());
 
             builder.ApplyConfiguration(new TutorConfiguration());
-
-            builder.ApplyConfiguration(new ParentConfiguration());
-
+            
             builder.ApplyConfiguration(new StudentCourseConfiguration());
 
             builder.ApplyConfiguration(new TutorCourseConfiguration());

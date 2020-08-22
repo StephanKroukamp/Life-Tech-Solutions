@@ -2,14 +2,8 @@
 
 namespace TjommeMetSomme.Entities
 {
-    public class Student
+    public class Student : Person
     {
-        public int StudentId { get; set; }
-
-        public string FirstName { get; set; }
-
-        public string LastName { get; set; }
-
         public int ParentId { get; set; }
 
         public Parent Parent { get; set; }

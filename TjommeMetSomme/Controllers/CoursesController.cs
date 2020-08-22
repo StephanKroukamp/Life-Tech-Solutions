@@ -68,7 +68,7 @@ namespace TjommeMetSomme.Controllers
 
             var newCourse = await _courseService.CreateCourse(courseToCreate);
 
-            var course = await _courseService.GetCourseById(newCourse.CourseId);
+            var course = await _courseService.GetCourseById(newCourse.Id);
 
             var courseResource = _mapper.Map<Course, CourseResource>(course);
 

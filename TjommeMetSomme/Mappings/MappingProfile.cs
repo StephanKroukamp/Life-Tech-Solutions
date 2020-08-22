@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using AutoMapper;
 using TjommeMetSomme.Entities;
+using TjommeMetSomme.Entities.Identity;
 using TjommeMetSomme.Resources;
 
 namespace TjommeMetSomme.Mappings
@@ -10,7 +11,8 @@ namespace TjommeMetSomme.Mappings
         public MappingProfile()
         {
             // Entity to Resource
-            CreateMap<Parent, ParentResource>();
+            CreateMap<Parent, ParentResource>()
+                .ForMember(parentResource => parentResource.Email, opt => opt.MapFrom(parent => parent.ApplicationUserId));
 
             CreateMap<Student, StudentResource>()
                 .ForMember(studentResource => studentResource.Parent, opt => opt.MapFrom(student => student.Parent));
@@ -28,7 +30,7 @@ namespace TjommeMetSomme.Mappings
             CreateMap<CourseResource, Course>();
             CreateMap<SaveCourseResource, Course>();
 
-            CreateMap<SignUpResource, User>();
+            CreateMap<SavePersonResource, ApplicationUser>();
         }
     }
 }

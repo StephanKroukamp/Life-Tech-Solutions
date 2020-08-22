@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TjommeMetSomme.Services;
+using TjommeMetSomme.Entities.Identity;
 
 namespace TjommeMetSomme
 {
@@ -53,7 +54,7 @@ namespace TjommeMetSomme
                 );
 
             services
-                .AddIdentity<User, Role>(options =>
+                .AddIdentity<ApplicationUser, ApplicationRole>(options =>
                 {
                     options.Password.RequiredLength = 8;
                     options.Password.RequireNonAlphanumeric = true;

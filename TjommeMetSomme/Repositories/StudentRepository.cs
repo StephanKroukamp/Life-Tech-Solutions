@@ -31,7 +31,7 @@ namespace TjommeMetSomme.Repositories
         {
             return await ApplicationDbContext.Students
                 .Include(student => student.Parent)
-                .SingleOrDefaultAsync(student => student.StudentId == studentId);
+                .SingleOrDefaultAsync(student => student.Id == studentId);
         }
 
         private ApplicationDbContext ApplicationDbContext

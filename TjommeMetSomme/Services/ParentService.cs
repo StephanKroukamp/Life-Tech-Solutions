@@ -43,9 +43,6 @@ namespace TjommeMetSomme.Services
 
         public async Task UpdateParent(Parent parentToBeUpdated, Parent parent)
         {
-            parentToBeUpdated.FirstName = parent.FirstName;
-            parentToBeUpdated.LastName = parent.LastName;
-
             await _unitOfWork.CommitAsync();
         }
     }

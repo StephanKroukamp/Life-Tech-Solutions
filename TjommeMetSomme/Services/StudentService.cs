@@ -56,9 +56,6 @@ namespace TjommeMetSomme.Services
 
         public async Task UpdateStudent(Student studentToBeUpdated, Student student)
         {
-            studentToBeUpdated.FirstName = student.FirstName;
-            studentToBeUpdated.LastName = student.LastName;
-
             studentToBeUpdated.ParentId = student.ParentId;
 
             await _unitOfWork.CommitAsync();

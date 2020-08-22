@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TjommeMetSomme.Entities;
+using TjommeMetSomme.Entities.Identity;
 using TjommeMetSomme.Resources;
 using TjommeMetSomme.Settings;
 
@@ -22,39 +23,19 @@ namespace TjommeMetSomme.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<ApplicationUser>_userManager;
 
-        private readonly RoleManager<Role> _roleManager;
-
-        private readonly IMapper _mapper;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
         private readonly JwtSettings _jwtSettings;
 
-        public AuthController(IMapper mapper, UserManager<User> userManager, RoleManager<Role> roleManager, IOptionsSnapshot<JwtSettings> jwtSettings)
+        public AuthController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IOptionsSnapshot<JwtSettings> jwtSettings)
         {
-            _mapper = mapper;
-
             _userManager = userManager;
 
             _roleManager = roleManager;
 
             _jwtSettings = jwtSettings.Value;
-        }
-
-        [HttpPost("SignUp")]
-        [AllowAnonymous]
-        public async Task<IActionResult> SignUp([FromBody] SignUpResource signUpResource)
-        {
-            var user = _mapper.Map<SignUpResource, User>(signUpResource);
-
-            var userCreateResult = await _userManager.CreateAsync(user, signUpResource.Password);
-
-            if (userCreateResult.Succeeded)
-            {
-                return Created(string.Empty, string.Empty);
-            }
-
-            return Problem(userCreateResult.Errors.First().Description, null, 500);
         }
 
         [HttpPost("SignIn")]
@@ -135,7 +116,7 @@ namespace TjommeMetSomme.Controllers
                 return BadRequest("Role name should be provided.");
             }
 
-            var newRole = new Role
+            var newRole = new ApplicationRole
             {
                 Name = roleName
             };
@@ -148,22 +129,6 @@ namespace TjommeMetSomme.Controllers
             }
 
             return Problem(roleResult.Errors.First().Description, null, 500);
-        }
-
-        [HttpPost("User/Role")]
-        [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> AddUserToRole(string email, string roleName)
-        {
-            var user = _userManager.Users.SingleOrDefault(u => u.Email == email);
-
-            var result = await _userManager.AddToRoleAsync(user, roleName);
-
-            if (result.Succeeded)
-            {
-                return Ok();
-            }
-
-            return Problem(result.Errors.First().Description, null, 500);
         }
     }
 }
