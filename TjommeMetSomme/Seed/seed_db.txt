@@ -1,0 +1,3 @@
+﻿INSERT INTO Parents (FirstName, LastName) VALUES ('Rick', 'Du Preez')
+
+INSERT INTO Students (Firstname, Lastname, ParentId) values ('rick jr', 'du preez', 1)
