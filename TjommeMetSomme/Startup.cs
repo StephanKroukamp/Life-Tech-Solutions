@@ -67,7 +67,7 @@ namespace TjommeMetSomme
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddTransient<IParentService, ParentService>();
-            //services.AddTransient<IBookService, BookService>();
+            services.AddTransient<IStudentService, StudentService>();
 
             services.AddSwaggerGen(options =>
             {

@@ -9,7 +9,7 @@ namespace TjommeMetSomme.Repositories
 
         private IParentRepository _parentRepository;
 
-        //private IBookRepository _bookRepository;
+        private IStudentRepository _studentRepository;
 
         public UnitOfWork(ApplicationDbContext applicationDbContext)
         {
@@ -18,7 +18,7 @@ namespace TjommeMetSomme.Repositories
 
         public IParentRepository Parents => _parentRepository ??= new ParentRepository(_applicationDbContext);
 
-        //public IBookRepository Books => _bookRepository ??= new BookRepository(_applicationDbContext);
+        public IStudentRepository Students => _studentRepository ??= new StudentRepository(_applicationDbContext);
 
         public async Task<int> CommitAsync()
         {

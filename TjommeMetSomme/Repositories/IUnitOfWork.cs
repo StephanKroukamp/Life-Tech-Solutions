@@ -7,7 +7,7 @@ namespace TjommeMetSomme.Repositories
     {
         IParentRepository Parents { get; }
 
-        //IBookRepository Books { get; }
+        IStudentRepository Students { get; }
 
         Task<int> CommitAsync();
     }

@@ -12,15 +12,15 @@ namespace TjommeMetSomme.Mappings
             // Entity to Resource
             CreateMap<Parent, ParentResource>();
 
-            //CreateMap<Book, BookResource>()
-            //    .ForMember(book => book.Author, opt => opt.MapFrom(resource => resource.Author));
+            CreateMap<Student, StudentResource>()
+                .ForMember(student => student.Parent, opt => opt.MapFrom(resource => resource.Parent));
 
             // Resource to Entity
             CreateMap<ParentResource, Parent>();
             CreateMap<SaveParentResource, Parent>();
 
-            //CreateMap<BookResource, Book>();
-            //CreateMap<SaveBookResource, Book>();
+            CreateMap<StudentResource, Student>();
+            CreateMap<SaveStudentResource, Student>();
 
             CreateMap<SignUpResource, User>()
                 .ForMember(user => user.UserName, opt => opt.MapFrom(resource => resource.UserName))
