@@ -8,9 +8,9 @@ namespace TjommeMetSomme.Repositories
 {
     public interface IParentRepository : IRepository<Parent>
     {
-        Task<IEnumerable<Parent>> GetAll(bool includeStudents, bool includeApplicationUser);
+        Task<IEnumerable<Parent>> GetAll(bool includeStudents);
 
-        Task<Parent> GetById(int parentId, bool includeStudents, bool includeApplicationUser);
+        Task<Parent> GetById(int parentId, bool includeStudents);
     }
 
     public class ParentRepository : Repository<Parent>, IParentRepository
@@ -19,62 +19,50 @@ namespace TjommeMetSomme.Repositories
             : base(applicationDbContext)
         { }
 
-        public async Task<IEnumerable<Parent>> GetAll(bool includeStudents, bool includeApplicationUser)
+        public async Task<IEnumerable<Parent>> GetAll(bool includeStudents)
         {
-            if (includeStudents && includeApplicationUser)
+            IEnumerable<Parent> parents;
+
+            if (includeStudents)
             {
-                return await ApplicationDbContext.Parents
-                   .Include(parent => parent.Students)
-                   .Include(parent => parent.ApplicationUser)
-                   .ToListAsync();
+                parents = await ApplicationDbContext.Parents
+                    .Include(parent => parent.ApplicationUser)
+                    .Include(parent => parent.ApplicationRole)
+                    .Include(parent => parent.Students)
+                    .ThenInclude(student => student.ApplicationUser)
+                    .Include(parent => parent.Students)
+                    .ThenInclude(student => student.ApplicationRole)
+                    .ToListAsync();
+            }
+            else
+            {
+                parents = await ApplicationDbContext.Parents
+                    .Include(parent => parent.ApplicationUser)
+                    .Include(parent => parent.ApplicationRole)
+                    .ToListAsync();
             }
 
-            if (includeStudents && !includeApplicationUser)
-            {
-                return await ApplicationDbContext.Parents
-                   .Include(parent => parent.Students)
-                   .ToListAsync();
-            }
-
-            if (includeApplicationUser && !includeStudents)
-            {
-                return await ApplicationDbContext.Parents
-                   .Include(parent => parent.ApplicationUser)
-                   .ToListAsync();
-            }
-
-            return await ApplicationDbContext.Parents
-                   .ToListAsync();
+            return parents;
         }
 
-        public async Task<Parent> GetById(int parentId, bool includeStudents, bool includeApplicationUser)
+        public async Task<Parent> GetById(int parentId, bool includeStudents)
         {
-            if (includeStudents && includeApplicationUser)
+            if (includeStudents)
             {
                 return await ApplicationDbContext.Parents
-                .Where(parent => parent.Id.Equals(parentId))
-                .Include(parent => parent.Students)
-                .Include(parent => parent.ApplicationUser)
-                .SingleOrDefaultAsync();
-            }
-
-            if (includeStudents && !includeApplicationUser)
-            {
-                return await ApplicationDbContext.Parents
-                    .Where(parent => parent.Id.Equals(parentId))
+                    .Include(parent => parent.ApplicationUser)
+                    .Include(parent => parent.ApplicationRole)
                     .Include(parent => parent.Students)
+                    .ThenInclude(student => student.ApplicationUser)
+                    .Include(parent => parent.Students)
+                    .ThenInclude(student => student.ApplicationRole)
+                    .Where(parent => parent.Id.Equals(parentId))
                     .SingleOrDefaultAsync();
             }
 
-            if (includeApplicationUser && !includeStudents)
-            {
-                return await ApplicationDbContext.Parents
-                .Where(parent => parent.Id.Equals(parentId))
-                .Include(parent => parent.ApplicationUser)
-                .SingleOrDefaultAsync();
-            }
-
             return await ApplicationDbContext.Parents
+                .Include(parent => parent.ApplicationUser)
+                .Include(parent => parent.ApplicationRole)
                 .Where(parent => parent.Id.Equals(parentId))
                 .SingleOrDefaultAsync();
         }

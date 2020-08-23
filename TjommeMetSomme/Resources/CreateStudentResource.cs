@@ -1,6 +1,6 @@
 ﻿namespace TjommeMetSomme.Resources
 {
-    public class SavePersonResource
+    public class CreateStudentResource
     {
         public string Email { get; set; }
 
@@ -11,5 +11,7 @@
         public string LastName { get; set; }
 
         public string Password { get; set; }
+
+        public int ParentId { get; set; }
     }
 }

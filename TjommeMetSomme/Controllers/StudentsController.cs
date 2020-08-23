@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using TjommeMetSomme.Entities;
+using TjommeMetSomme.Entities.Identity;
 using TjommeMetSomme.Resources;
 using TjommeMetSomme.Services;
 using TjommeMetSomme.Validators;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using TjommeMetSomme.Entities.Identity;
-using Microsoft.AspNetCore.Identity;
-using System.Linq;
 
 namespace TjommeMetSomme.Controllers
 {
@@ -17,7 +17,7 @@ namespace TjommeMetSomme.Controllers
     [ApiController]
     public class StudentsController : ControllerBase
     {
-        private UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         private readonly IStudentService _studentService;
 
@@ -34,9 +34,18 @@ namespace TjommeMetSomme.Controllers
 
         [HttpGet("")]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<StudentResource>>> GetAllStudents()
+        public async Task<ActionResult<IEnumerable<StudentResource>>> GetAll(int parentId = 0, bool includeParent = true)
         {
-            var students = await _studentService.GetAllWithParent();
+
+            IEnumerable<Student> students;
+            
+            if (!parentId.Equals(0))
+            {
+                students = await _studentService.GetAllByParentId(parentId, includeParent);
+            } else
+            {
+                students = await _studentService.GetAll(includeParent);
+            }
 
             var studentResources = _mapper.Map<IEnumerable<Student>, IEnumerable<StudentResource>>(students);
 
@@ -45,9 +54,9 @@ namespace TjommeMetSomme.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<StudentResource>> GetStudentByIdWithParent(int id)
+        public async Task<ActionResult<StudentResource>> GetById(int id, bool includeParent = true)
         {
-            var student = await _studentService.GetStudentByIdWithParent(id);
+            var student = await _studentService.GetById(id, includeParent);
 
             var studentResource = _mapper.Map<Student, StudentResource>(student);
 
@@ -56,7 +65,7 @@ namespace TjommeMetSomme.Controllers
 
         [HttpPost("")]
         [Authorize(Roles = "Administrator, Manager")]
-        public async Task<ActionResult<StudentResource>> CreateStudent([FromBody] SaveStudentResource saveStudentResource)
+        public async Task<ActionResult<StudentResource>> CreateStudent([FromBody] CreateStudentResource saveStudentResource)
         {
             var validator = new SaveStudentResourceValidator();
 
@@ -67,7 +76,7 @@ namespace TjommeMetSomme.Controllers
                 return BadRequest(validationResult.Errors); // this needs refining
             }
 
-            var user = _mapper.Map<SaveStudentResource, ApplicationUser>(saveStudentResource);
+            var user = _mapper.Map<CreateStudentResource, ApplicationUser>(saveStudentResource);
 
             var userCreateResult = await _userManager.CreateAsync(user, saveStudentResource.Password);
 
@@ -83,11 +92,14 @@ namespace TjommeMetSomme.Controllers
                 return Problem(userAddToRoleResult.Errors.First().Description, null, 500);
             }
 
-            var studentToCreate = _mapper.Map<SaveStudentResource, Student>(saveStudentResource);
+            var studentToCreate = _mapper.Map<CreateStudentResource, Student>(saveStudentResource);
 
-            var newStudent = await _studentService.CreateStudent(studentToCreate);
+            studentToCreate.ApplicationUserId = user.Id;
+            studentToCreate.ApplicationRoleId = Constants.Student.Role.ID;
 
-            var student = await _studentService.GetStudentByIdWithParent(newStudent.Id);
+            var newStudent = await _studentService.Create(studentToCreate);
+
+            var student = await _studentService.GetById(newStudent.Id, true);
 
             var studentResource = _mapper.Map<Student, StudentResource>(student);
 
@@ -96,7 +108,7 @@ namespace TjommeMetSomme.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Administrator, Manager")]
-        public async Task<ActionResult<StudentResource>> UpdateStudent(int id, [FromBody] SaveStudentResource saveStudentResource)
+        public async Task<ActionResult<StudentResource>> UpdateStudent(int id, [FromBody] CreateStudentResource saveStudentResource)
         {
             var validator = new SaveStudentResourceValidator();
 
@@ -109,18 +121,18 @@ namespace TjommeMetSomme.Controllers
                 return BadRequest(validationResult.Errors); // this needs refining
             }
 
-            var studentToBeUpdated = await _studentService.GetStudentByIdWithParent(id);
+            var studentToBeUpdated = await _studentService.GetById(id, true);
 
             if (studentToBeUpdated == null)
             {
                 return NotFound();
             }
 
-            var student = _mapper.Map<SaveStudentResource, Student>(saveStudentResource);
+            var student = _mapper.Map<CreateStudentResource, Student>(saveStudentResource);
 
-            await _studentService.UpdateStudent(studentToBeUpdated, student);
+            await _studentService.Update(studentToBeUpdated, student);
 
-            var updatedStudent = await _studentService.GetStudentByIdWithParent(id);
+            var updatedStudent = await _studentService.GetById(id, true);
 
             var updatedStudentResource = _mapper.Map<Student, StudentResource>(updatedStudent);
 
@@ -136,14 +148,14 @@ namespace TjommeMetSomme.Controllers
                 return BadRequest();
             }
 
-            var student = await _studentService.GetStudentByIdWithParent(id);
+            var student = await _studentService.GetById(id);
 
             if (student == null)
             {
                 return NotFound();
             }
 
-            await _studentService.DeleteStudent(student);
+            await _studentService.Delete(student);
 
             return NoContent();
         }

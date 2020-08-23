@@ -31,9 +31,9 @@ namespace TjommeMetSomme.Controllers
 
         [HttpGet("")]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<CourseResource>>> GetAllCourses()
+        public async Task<ActionResult<IEnumerable<CourseResource>>> GetAll(bool includeStudents = true)
         {
-            var courses = await _courseService.GetAllWithStudents();
+            var courses = await _courseService.GetAll(includeStudents);
 
             var courseResources = _mapper.Map<IEnumerable<Course>, IEnumerable<CourseResource>>(courses);
 
@@ -42,9 +42,9 @@ namespace TjommeMetSomme.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<CourseResource>> GetCourseByIdWithStudents(int id)
+        public async Task<ActionResult<CourseResource>> GetById(int id, bool includeStudents = true)
         {
-            var course = await _courseService.GetCourseByIdWithStudents(id);
+            var course = await _courseService.GetById(id, includeStudents);
 
             var courseResource = _mapper.Map<Course, CourseResource>(course);
 
@@ -53,7 +53,7 @@ namespace TjommeMetSomme.Controllers
 
         [HttpPost("")]
         [Authorize(Roles = "Administrator, Manager")]
-        public async Task<ActionResult<CourseResource>> CreateCourse([FromBody] SaveCourseResource saveCourseResource)
+        public async Task<ActionResult<CourseResource>> Create([FromBody] SaveCourseResource saveCourseResource)
         {
             var validator = new SaveCourseResourceValidator();
 
@@ -66,9 +66,9 @@ namespace TjommeMetSomme.Controllers
 
             var courseToCreate = _mapper.Map<SaveCourseResource, Course>(saveCourseResource);
 
-            var newCourse = await _courseService.CreateCourse(courseToCreate);
+            var newCourse = await _courseService.Create(courseToCreate);
 
-            var course = await _courseService.GetCourseById(newCourse.Id);
+            var course = await _courseService.GetById(newCourse.Id);
 
             var courseResource = _mapper.Map<Course, CourseResource>(course);
 
@@ -77,7 +77,7 @@ namespace TjommeMetSomme.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Administrator, Manager")]
-        public async Task<ActionResult<StudentResource>> UpdateCourse(int id, [FromBody] SaveCourseResource saveCourseResource)
+        public async Task<ActionResult<StudentResource>> Update(int id, [FromBody] SaveCourseResource saveCourseResource)
         {
             var validator = new SaveCourseResourceValidator();
 
@@ -90,7 +90,7 @@ namespace TjommeMetSomme.Controllers
                 return BadRequest(validationResult.Errors); // this needs refining
             }
 
-            var courseToBeUpdated = await _courseService.GetCourseByIdWithStudents(id);
+            var courseToBeUpdated = await _courseService.GetById(id, true);
 
             if (courseToBeUpdated == null)
             {
@@ -99,9 +99,9 @@ namespace TjommeMetSomme.Controllers
 
             var course = _mapper.Map<SaveCourseResource, Course>(saveCourseResource);
 
-            await _courseService.UpdateCourse(courseToBeUpdated, course);
+            await _courseService.Update(courseToBeUpdated, course);
 
-            var updatedCourse = await _courseService.GetCourseByIdWithStudents(id);
+            var updatedCourse = await _courseService.GetById(id, true);
 
             var updatedCourseResource = _mapper.Map<Course, CourseResource>(updatedCourse);
 
@@ -110,21 +110,21 @@ namespace TjommeMetSomme.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Administrator, Manager")]
-        public async Task<IActionResult> DeleteCourse(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == 0)
             {
                 return BadRequest();
             }
 
-            var course = await _courseService.GetCourseByIdWithStudents(id);
+            var course = await _courseService.GetById(id, true);
 
             if (course == null)
             {
                 return NotFound();
             }
 
-            await _courseService.DeleteCourse(course);
+            await _courseService.Delete(course);
 
             return NoContent();
         }
@@ -138,14 +138,14 @@ namespace TjommeMetSomme.Controllers
                 return BadRequest();
             }
 
-            var courseToBeUpdated = await _courseService.GetCourseByIdWithStudents(courseId);
+            var courseToBeUpdated = await _courseService.GetById(courseId, true);
 
             if (courseToBeUpdated == null)
             {
                 return NotFound();
             }
 
-            var student = await _studentService.GetStudentById(studentId);
+            var student = await _studentService.GetById(studentId);
 
             if (student == null)
             {
@@ -160,9 +160,9 @@ namespace TjommeMetSomme.Controllers
                 StudentId = studentId
             });
 
-            await _courseService.UpdateCourse(courseToBeUpdated, course);
+            await _courseService.Update(courseToBeUpdated, course);
 
-            var updatedCourse = await _courseService.GetCourseByIdWithStudents(courseId);
+            var updatedCourse = await _courseService.GetById(courseId, true);
 
             var courseResource = _mapper.Map<Course, CourseResource>(updatedCourse);
 
@@ -178,14 +178,14 @@ namespace TjommeMetSomme.Controllers
                 return BadRequest();
             }
 
-            var courseToBeUpdated = await _courseService.GetCourseByIdWithStudents(courseId);
+            var courseToBeUpdated = await _courseService.GetById(courseId, true);
 
             if (courseToBeUpdated == null)
             {
                 return NotFound();
             }
 
-            var student = await _studentService.GetStudentById(studentId);
+            var student = await _studentService.GetById(studentId);
 
             if (student == null)
             {
@@ -198,9 +198,9 @@ namespace TjommeMetSomme.Controllers
 
             course.StudentCourses.Remove(studentCourseToBeRemoved);
 
-            await _courseService.UpdateCourse(courseToBeUpdated, course);
+            await _courseService.Update(courseToBeUpdated, course);
 
-            var updatedCourse = await _courseService.GetCourseByIdWithStudents(courseId);
+            var updatedCourse = await _courseService.GetById(courseId, true);
 
             var courseResource = _mapper.Map<Course, CourseResource>(updatedCourse);
 

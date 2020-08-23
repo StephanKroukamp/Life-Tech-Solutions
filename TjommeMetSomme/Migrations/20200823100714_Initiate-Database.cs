@@ -65,32 +65,6 @@ namespace TjommeMetSomme.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Parents",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    ApplicationUserId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Parents", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tutors",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    ApplicationUserId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tutors", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -198,17 +172,82 @@ namespace TjommeMetSomme.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Parents",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ApplicationUserId = table.Column<int>(nullable: false),
+                    ApplicationRoleId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Parents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Parents_AspNetRoles_ApplicationRoleId",
+                        column: x => x.ApplicationRoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Parents_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tutors",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ApplicationUserId = table.Column<int>(nullable: false),
+                    ApplicationRoleId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tutors", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tutors_AspNetRoles_ApplicationRoleId",
+                        column: x => x.ApplicationRoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Tutors_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Students",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     ApplicationUserId = table.Column<int>(nullable: false),
+                    ApplicationRoleId = table.Column<int>(nullable: false),
                     ParentId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Students", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Students_AspNetRoles_ApplicationRoleId",
+                        column: x => x.ApplicationRoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Students_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Students_Parents_ParentId",
                         column: x => x.ParentId,
@@ -270,11 +309,11 @@ namespace TjommeMetSomme.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { 1, "002cc027-5a13-4a39-b253-3de3a05c952c", "Administrator", "Administrator" },
-                    { 2, "755d0428-6ce2-41e5-bd1f-33034f3b3a0a", "Manager", "Manager" },
-                    { 3, "0069c73f-7c9b-45d3-bec1-5f7574995fb6", "Parent", "Parent" },
-                    { 4, "040803e6-fe0f-49d3-893c-71333dce0109", "Student", "Student" },
-                    { 5, "3bddc72e-f3eb-4270-8e12-b970a51ba05a", "Tutor", "Tutor" }
+                    { 1, "33d93b66-1b9a-405b-b96a-8f40b2cd2e9f", "Administrator", "Administrator" },
+                    { 2, "1077c5d2-0503-4513-85de-6198b2eec0c5", "Manager", "Manager" },
+                    { 3, "81ef0827-6b28-41fb-8db2-986da7f64fe0", "Parent", "Parent" },
+                    { 4, "9a4dd1a9-b3a4-4702-904b-dcdd8ee568e5", "Student", "Student" },
+                    { 5, "e7ad4cb9-3e32-4c43-a0e0-f97502149a26", "Tutor", "Tutor" }
                 });
 
             migrationBuilder.InsertData(
@@ -282,8 +321,8 @@ namespace TjommeMetSomme.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "7b20a27e-d1ce-4928-a127-7ce2d12a9720", "administrator@tjommemetsomme.co.za", false, "admin", "istrator", false, null, null, null, "AQAAAAEAACcQAAAAEDbmgIPDfXwfrV4SvnwVxmJtFTY+iafpP5M9ewl4ZJrEMQzMDNG58bEbz6NIaSxEyg==", null, false, null, false, "administrator" },
-                    { 2, 0, "be4634d6-c592-4bc9-aadc-383c90c138f5", "manager@tjommemetsomme.co.za", false, "man", "ager", false, null, null, null, "AQAAAAEAACcQAAAAEAgYUQe9l1wB3impfXgqSSVaYVsecWO6GfA89++6Poehkywo74InqedGDAHh37oZTQ==", null, false, null, false, "manager" }
+                    { 1, 0, "c9b2bc82-dace-409b-be16-42bf29c7c6ce", "administrator@tjommemetsomme.co.za", false, "admin", "istrator", false, null, null, null, "AQAAAAEAACcQAAAAEJpofsw9iHDhW7g0a8645O7uqJ4Dmhu87W49raZI4My4p/gBwZePRwc4wreD2bPY8g==", null, false, null, false, "administrator" },
+                    { 2, 0, "5a2d74f0-5bb5-4e4a-ad88-39e484bf8b24", "manager@tjommemetsomme.co.za", false, "man", "ager", false, null, null, null, "AQAAAAEAACcQAAAAEFoeu7Dq6d5GcQErgn6ujPzCV1Z2nNf7vrvVOaMGZtoqzB0M+wrZ8JnZHuS4txdXcw==", null, false, null, false, "manager" }
                 });
 
             migrationBuilder.InsertData(
@@ -334,6 +373,26 @@ namespace TjommeMetSomme.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Parents_ApplicationRoleId",
+                table: "Parents",
+                column: "ApplicationRoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Parents_ApplicationUserId",
+                table: "Parents",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Students_ApplicationRoleId",
+                table: "Students",
+                column: "ApplicationRoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Students_ApplicationUserId",
+                table: "Students",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Students_ParentId",
                 table: "Students",
                 column: "ParentId");
@@ -342,6 +401,16 @@ namespace TjommeMetSomme.Migrations
                 name: "IX_Students_Courses_CourseId",
                 table: "Students_Courses",
                 column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tutors_ApplicationRoleId",
+                table: "Tutors",
+                column: "ApplicationRoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tutors_ApplicationUserId",
+                table: "Tutors",
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tutors_Courses_CourseId",
@@ -373,12 +442,6 @@ namespace TjommeMetSomme.Migrations
                 name: "Tutors_Courses");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Students");
 
             migrationBuilder.DropTable(
@@ -389,6 +452,12 @@ namespace TjommeMetSomme.Migrations
 
             migrationBuilder.DropTable(
                 name: "Parents");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

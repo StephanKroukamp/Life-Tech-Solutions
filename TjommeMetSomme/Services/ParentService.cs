@@ -5,6 +5,13 @@ using TjommeMetSomme.Repositories;
 
 namespace TjommeMetSomme.Services
 {
+    public interface IParentService : IService<Parent>
+    {
+        Task<IEnumerable<Parent>> GetAll(bool includeStudents);
+
+        Task<Parent> GetById(int parentId, bool includeStudents);
+    }
+
     public class ParentService : IParentService
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -16,8 +23,7 @@ namespace TjommeMetSomme.Services
 
         public async Task<Parent> Create(Parent parent)
         {
-            await _unitOfWork.Parents
-                .Add(parent);
+            await _unitOfWork.Parents.Add(parent);
 
             await _unitOfWork.Commit();
 
@@ -48,14 +54,14 @@ namespace TjommeMetSomme.Services
 
         // 
 
-        public async Task<IEnumerable<Parent>> GetAll(bool includeStudents, bool includeApplicationUser)
+        public async Task<IEnumerable<Parent>> GetAll(bool includeStudents)
         {
-            return await _unitOfWork.Parents.GetAll(includeStudents, includeApplicationUser);
+            return await _unitOfWork.Parents.GetAll(includeStudents);
         }
 
-        public async Task<Parent> GetById(int parentId, bool includeStudents, bool includeApplicationUser)
+        public async Task<Parent> GetById(int parentId, bool includeStudents)
         {
-            return await _unitOfWork.Parents.GetById(parentId, includeStudents, includeApplicationUser);
+            return await _unitOfWork.Parents.GetById(parentId, includeStudents);
         }
     }
 }

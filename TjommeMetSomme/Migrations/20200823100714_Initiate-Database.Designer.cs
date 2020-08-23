@@ -10,7 +10,7 @@ using TjommeMetSomme.Entities;
 namespace TjommeMetSomme.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200822191153_Initiate-Database")]
+    [Migration("20200823100714_Initiate-Database")]
     partial class InitiateDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -172,35 +172,35 @@ namespace TjommeMetSomme.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "002cc027-5a13-4a39-b253-3de3a05c952c",
+                            ConcurrencyStamp = "33d93b66-1b9a-405b-b96a-8f40b2cd2e9f",
                             Name = "Administrator",
                             NormalizedName = "Administrator"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "755d0428-6ce2-41e5-bd1f-33034f3b3a0a",
+                            ConcurrencyStamp = "1077c5d2-0503-4513-85de-6198b2eec0c5",
                             Name = "Manager",
                             NormalizedName = "Manager"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "0069c73f-7c9b-45d3-bec1-5f7574995fb6",
+                            ConcurrencyStamp = "81ef0827-6b28-41fb-8db2-986da7f64fe0",
                             Name = "Parent",
                             NormalizedName = "Parent"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "040803e6-fe0f-49d3-893c-71333dce0109",
+                            ConcurrencyStamp = "9a4dd1a9-b3a4-4702-904b-dcdd8ee568e5",
                             Name = "Student",
                             NormalizedName = "Student"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "3bddc72e-f3eb-4270-8e12-b970a51ba05a",
+                            ConcurrencyStamp = "e7ad4cb9-3e32-4c43-a0e0-f97502149a26",
                             Name = "Tutor",
                             NormalizedName = "Tutor"
                         });
@@ -281,13 +281,13 @@ namespace TjommeMetSomme.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7b20a27e-d1ce-4928-a127-7ce2d12a9720",
+                            ConcurrencyStamp = "c9b2bc82-dace-409b-be16-42bf29c7c6ce",
                             Email = "administrator@tjommemetsomme.co.za",
                             EmailConfirmed = false,
                             FirstName = "admin",
                             LastName = "istrator",
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEDbmgIPDfXwfrV4SvnwVxmJtFTY+iafpP5M9ewl4ZJrEMQzMDNG58bEbz6NIaSxEyg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJpofsw9iHDhW7g0a8645O7uqJ4Dmhu87W49raZI4My4p/gBwZePRwc4wreD2bPY8g==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "administrator"
@@ -296,13 +296,13 @@ namespace TjommeMetSomme.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "be4634d6-c592-4bc9-aadc-383c90c138f5",
+                            ConcurrencyStamp = "5a2d74f0-5bb5-4e4a-ad88-39e484bf8b24",
                             Email = "manager@tjommemetsomme.co.za",
                             EmailConfirmed = false,
                             FirstName = "man",
                             LastName = "ager",
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEAgYUQe9l1wB3impfXgqSSVaYVsecWO6GfA89++6Poehkywo74InqedGDAHh37oZTQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFoeu7Dq6d5GcQErgn6ujPzCV1Z2nNf7vrvVOaMGZtoqzB0M+wrZ8JnZHuS4txdXcw==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "manager"
@@ -316,10 +316,17 @@ namespace TjommeMetSomme.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("ApplicationRoleId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ApplicationUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationRoleId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Parents");
                 });
@@ -331,6 +338,9 @@ namespace TjommeMetSomme.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("ApplicationRoleId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ApplicationUserId")
                         .HasColumnType("int");
 
@@ -338,6 +348,10 @@ namespace TjommeMetSomme.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationRoleId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("ParentId");
 
@@ -366,10 +380,17 @@ namespace TjommeMetSomme.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("ApplicationRoleId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ApplicationUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationRoleId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Tutors");
                 });
@@ -459,8 +480,35 @@ namespace TjommeMetSomme.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TjommeMetSomme.Entities.Parent", b =>
+                {
+                    b.HasOne("TjommeMetSomme.Entities.Identity.ApplicationRole", "ApplicationRole")
+                        .WithMany()
+                        .HasForeignKey("ApplicationRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TjommeMetSomme.Entities.Identity.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("TjommeMetSomme.Entities.Student", b =>
                 {
+                    b.HasOne("TjommeMetSomme.Entities.Identity.ApplicationRole", "ApplicationRole")
+                        .WithMany()
+                        .HasForeignKey("ApplicationRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TjommeMetSomme.Entities.Identity.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("TjommeMetSomme.Entities.Parent", "Parent")
                         .WithMany("Students")
                         .HasForeignKey("ParentId")
@@ -479,6 +527,21 @@ namespace TjommeMetSomme.Migrations
                     b.HasOne("TjommeMetSomme.Entities.Student", "Student")
                         .WithMany("StudentCourses")
                         .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TjommeMetSomme.Entities.Tutor", b =>
+                {
+                    b.HasOne("TjommeMetSomme.Entities.Identity.ApplicationRole", "ApplicationRole")
+                        .WithMany()
+                        .HasForeignKey("ApplicationRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TjommeMetSomme.Entities.Identity.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

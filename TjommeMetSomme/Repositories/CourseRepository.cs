@@ -6,31 +6,59 @@ using TjommeMetSomme.Entities;
 
 namespace TjommeMetSomme.Repositories
 {
+    public interface ICourseRepository : IRepository<Course>
+    {
+        Task<IEnumerable<Course>> GetAll(bool includeStudents);
+
+        Task<Course> GetById(int courseId, bool includeStudents);
+
+        Task<IEnumerable<Course>> GetAllByStudentId(int studentId, bool includeStudents);
+    }
+
     public class CourseRepository : Repository<Course>, ICourseRepository
     {
         public CourseRepository(ApplicationDbContext applicationDbContext)
             : base(applicationDbContext)
         { }
 
-        public async Task<IEnumerable<Course>> GetAllWithStudentsAsync()
+        public async Task<IEnumerable<Course>> GetAll(bool includeStudents)
         {
+            if (includeStudents)
+            {
+                return await ApplicationDbContext.Courses
+                    .Include(course => course.StudentCourses)
+                    .ToListAsync();
+            }
+
             return await ApplicationDbContext.Courses
-                .Include(course => course.StudentCourses)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Course>> GetAllWithStudentsByStudentIdAsync(int studentId)
+        public async Task<IEnumerable<Course>> GetAllByStudentId(int studentId, bool includeStudents)
         {
+            if(includeStudents)
+            {
+                return await ApplicationDbContext.Courses
+                    .Include(course => course.StudentCourses)
+                    .Where(course => course.StudentCourses.Any(studentCourse => studentCourse.StudentId == studentId))
+                    .ToListAsync();
+            }
+
             return await ApplicationDbContext.Courses
-                .Include(course => course.StudentCourses)
                 .Where(course => course.StudentCourses.Any(studentCourse => studentCourse.StudentId == studentId))
                 .ToListAsync();
         }
 
-        public async Task<Course> GetByIdWithStudentsAsync(int courseId)
+        public async Task<Course> GetById(int courseId, bool includeStudents)
         {
-            return await ApplicationDbContext.Courses
+            if (includeStudents)
+            {
+                return await ApplicationDbContext.Courses
                 .Include(course => course.StudentCourses)
+                .SingleOrDefaultAsync(course => course.Id == courseId);
+            }
+
+            return await ApplicationDbContext.Courses
                 .SingleOrDefaultAsync(course => course.Id == courseId);
         }
 

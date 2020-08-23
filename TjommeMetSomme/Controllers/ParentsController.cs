@@ -33,10 +33,10 @@ namespace TjommeMetSomme.Controllers
         }
 
         [HttpGet("")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Administrator, Manager")]
         public async Task<ActionResult<IEnumerable<ParentResource>>> GetAll(bool includeStudents = true)
         {
-            var parents = await _parentService.GetAll(includeStudents, true);
+            var parents = await _parentService.GetAll(includeStudents);
 
             var parentResponses = _mapper.Map<IEnumerable<Parent>, IEnumerable<ParentResource>>(parents);
 
@@ -44,10 +44,10 @@ namespace TjommeMetSomme.Controllers
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Administrator, Manager")]
         public async Task<ActionResult<ParentResource>> GetById(int id, bool includeStudents = true)
         {
-            var parent = await _parentService.GetById(id, includeStudents, true);
+            var parent = await _parentService.GetById(id, includeStudents);
 
             var parentResource = _mapper.Map<Parent, ParentResource>(parent);
 
@@ -56,20 +56,20 @@ namespace TjommeMetSomme.Controllers
 
         [HttpPost("")]
         [Authorize(Roles = "Administrator, Manager")]
-        public async Task<ActionResult<ParentResource>> Create([FromBody] SaveParentResource saveParentResource)
+        public async Task<ActionResult<ParentResource>> Create([FromBody] CreateParentResource createParentResource)
         {
-            var validator = new SaveParentResourceValidator();
+            var validator = new CreateParentResourceValidator();
 
-            var validationResult = await validator.ValidateAsync(saveParentResource);
+            var validationResult = await validator.ValidateAsync(createParentResource);
 
             if (!validationResult.IsValid)
             {
                 return BadRequest(validationResult.Errors); // this needs refining
             }
 
-            var user = _mapper.Map<SaveParentResource, ApplicationUser>(saveParentResource);
+            var user = _mapper.Map<CreateParentResource, ApplicationUser>(createParentResource);
 
-            var userCreateResult = await _userManager.CreateAsync(user, saveParentResource.Password);
+            var userCreateResult = await _userManager.CreateAsync(user, createParentResource.Password);
 
             if (!userCreateResult.Succeeded)
             {
@@ -83,26 +83,30 @@ namespace TjommeMetSomme.Controllers
                 return Problem(userAddToRoleResult.Errors.First().Description, null, 500);
             }
 
-            var parentToCreate = _mapper.Map<SaveParentResource, Parent>(saveParentResource);
+            var parentToCreate = _mapper.Map<CreateParentResource, Parent>(createParentResource);
 
             parentToCreate.ApplicationUserId = user.Id;
+            parentToCreate.ApplicationRoleId = Constants.Parent.Role.ID;
 
             var newParent = await _parentService.Create(parentToCreate);
 
-            var parent = await _parentService.GetById(newParent.Id);
+            var parent = await _parentService.GetById(newParent.Id, false);
 
             var parentResource = _mapper.Map<Parent, ParentResource>(parent);
 
             return Ok(parentResource);
         }
 
+        //TODO: Ensure that the updating of email and username is unique and would throw an error if trying to update it to another email that already exists in the system
+        //TODO: Perhaps move the updating of identityUser data to auth controller
+        //TODO: Add a change password method to the auth controller that allows for password to be changed
         [HttpPut("{id}")]
         [Authorize(Roles = "Administrator, Manager")]
-        public async Task<ActionResult<ParentResource>> Update(int id, [FromBody] SaveParentResource saveParentResource)
+        public async Task<ActionResult<ParentResource>> Update(int id, [FromBody] UpdateParentResource updateParentResource)
         {
-            var validator = new SaveParentResourceValidator();
+            var validator = new UpdateParentResourceValidator();
 
-            var validationResult = await validator.ValidateAsync(saveParentResource);
+            var validationResult = await validator.ValidateAsync(updateParentResource);
 
             if (!validationResult.IsValid)
             {
@@ -116,17 +120,33 @@ namespace TjommeMetSomme.Controllers
                 return NotFound();
             }
 
-            var parent = _mapper.Map<SaveParentResource, Parent>(saveParentResource);
+            var user = await _userManager.FindByIdAsync(parentToBeUpdated.ApplicationUserId.ToString());
 
-            await _parentService.Update(parentToBeUpdated, parent);
+            if (user == null)
+            {
+                return NotFound();
 
-            var updatedParent = await _parentService.GetById(id);
+            }
+            user.Email = updateParentResource.Email;
+            user.UserName = updateParentResource.UserName;
+            user.FirstName = updateParentResource.FirstName;
+            user.LastName = updateParentResource.LastName;
 
-            var updatedParentResource = _mapper.Map<Parent, ParentResource>(updatedParent);
+            var userUpdateResult = await _userManager.UpdateAsync(user);
 
-            return Ok(updatedParentResource);
+            if (!userUpdateResult.Succeeded)
+            {
+                return Problem(userUpdateResult.Errors.First().Description, null, 500);
+            }
+
+            var parent = await _parentService.GetById(id, false);
+
+            var parentResource = _mapper.Map<Parent, ParentResource>(parent);
+
+            return Ok(parentResource);
         }
-
+            
+        //TODO: Test delete
         [HttpDelete("{id}")]
         [Authorize(Roles = "Administrator, Manager")]
         public async Task<IActionResult> Delete(int id)
@@ -137,5 +157,7 @@ namespace TjommeMetSomme.Controllers
 
             return NoContent();
         }
+
+
     }
 }

@@ -5,6 +5,15 @@ using TjommeMetSomme.Repositories;
 
 namespace TjommeMetSomme.Services
 {
+    public interface IStudentService : IService<Student>
+    {
+        Task<IEnumerable<Student>> GetAll(bool includeParent);
+
+        Task<IEnumerable<Student>> GetAllByParentId(int parentId, bool includeParent);
+
+        Task<Student> GetById(int studentId, bool includeParent);
+    }
+
     public class StudentService : IStudentService
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -14,7 +23,7 @@ namespace TjommeMetSomme.Services
             this._unitOfWork = unitOfWork;
         }
 
-        public async Task<Student> CreateStudent(Student student)
+        public async Task<Student> Create(Student student)
         {
             await _unitOfWork.Students.Add(student);
 
@@ -23,42 +32,45 @@ namespace TjommeMetSomme.Services
             return student;
         }
 
-        public async Task DeleteStudent(Student student)
+        public async Task Delete(Student student)
         {
             _unitOfWork.Students.Remove(student);
 
             await _unitOfWork.Commit();
         }
 
-        public async Task<IEnumerable<Student>> GetAllWithParent()
+        public async Task<IEnumerable<Student>> GetAll()
         {
-            return await _unitOfWork.Students
-                .GetAllWithParentAsync();
+            return await _unitOfWork.Students.GetAll();
         }
 
-        public async Task<Student> GetStudentById(int studentId)
+        public async Task<Student> GetById(int studentId)
         {
-            return await _unitOfWork.Students
-                .GetById(studentId);
+            return await _unitOfWork.Students.GetById(studentId);
         }
 
-        public async Task<Student> GetStudentByIdWithParent(int studentId)
-        {
-            return await _unitOfWork.Students
-                .GetByIdWithParentAsync(studentId);
-        }
-
-        public async Task<IEnumerable<Student>> GetStudentsByParentId(int parentId)
-        {
-            return await _unitOfWork.Students
-                .GetAllWithParentByParentIdAsync(parentId);
-        }
-
-        public async Task UpdateStudent(Student studentToBeUpdated, Student student)
+        public async Task Update(Student studentToBeUpdated, Student student)
         {
             studentToBeUpdated.ParentId = student.ParentId;
 
             await _unitOfWork.Commit();
+        }
+
+        // 
+
+        public async Task<IEnumerable<Student>> GetAll(bool includeParent)
+        {
+            return await _unitOfWork.Students.GetAll(includeParent);
+        }
+
+        public async Task<IEnumerable<Student>> GetAllByParentId(int parentId, bool includeParent)
+        {
+            return await _unitOfWork.Students.GetAllByParentId(parentId, includeParent);
+        }
+
+        public async Task<Student> GetById(int studentId, bool includeParent)
+        {
+            return await _unitOfWork.Students.GetById(studentId, includeParent);
         }
     }
 }

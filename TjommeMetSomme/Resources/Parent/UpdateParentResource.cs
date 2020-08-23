@@ -1,11 +1,10 @@
 ﻿using FluentValidation;
-using TjommeMetSomme.Resources;
 
-namespace TjommeMetSomme.Validators
+namespace TjommeMetSomme.Resources
 {
-    public class SaveParentResourceValidator : AbstractValidator<SaveParentResource>
+    public class UpdateParentResourceValidator : AbstractValidator<UpdateParentResource>
     {
-        public SaveParentResourceValidator()
+        public UpdateParentResourceValidator()
         {
             RuleFor(savePersonResource => savePersonResource.Email)
                 .NotEmpty()
@@ -22,10 +21,17 @@ namespace TjommeMetSomme.Validators
             RuleFor(savePersonResource => savePersonResource.LastName)
                     .NotEmpty()
                     .MaximumLength(50);
-
-            RuleFor(savePersonResource => savePersonResource.Password)
-                .NotEmpty()
-                .MaximumLength(50);
         }
+    }
+
+    public class UpdateParentResource
+    {
+        public string Email { get; set; }
+
+        public string UserName { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
     }
 }

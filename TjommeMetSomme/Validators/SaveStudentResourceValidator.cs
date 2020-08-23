@@ -3,7 +3,7 @@ using TjommeMetSomme.Resources;
 
 namespace TjommeMetSomme.Validators
 {
-    public class SaveStudentResourceValidator : AbstractValidator<SaveStudentResource>
+    public class SaveStudentResourceValidator : AbstractValidator<CreateStudentResource>
     {
         public SaveStudentResourceValidator()
         {

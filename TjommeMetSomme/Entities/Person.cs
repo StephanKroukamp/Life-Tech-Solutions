@@ -8,6 +8,10 @@ namespace TjommeMetSomme.Entities
 
         public int ApplicationUserId { get; set; }
 
+        public int ApplicationRoleId { get; set; }
+
         public virtual ApplicationUser ApplicationUser { get; set; }
+
+        public virtual ApplicationRole ApplicationRole { get; set; }
     }
 }
